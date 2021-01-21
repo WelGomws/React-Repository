@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import * as S from "./style";
+import { Link } from "react-router-dom";
 import { FaPlus, FaBars, FaMinus } from "react-icons/fa";
 import api from "../../services/api";
 
@@ -9,45 +10,55 @@ export default function Main() {
   const [avatar, setAvatar] = useState("");
   const [hideRepo, setHideRepo] = useState(true);
 
-  async function handleSubmit(e) {
-    const nameOrg = await api.get(`badico-cloud-hub`);
-    const response = await api.get(`badico-cloud-hub/repos`);
+  async function handleSubmit() {
+    if(repos.length){
+      return setHideRepo(!hideRepo)
+    }
+    const [nameOrg, response] = await Promise.all([
+      api.get(`orgs/badico-cloud-hub`),
+      api.get(`orgs/badico-cloud-hub/repos`),
+    ]);
 
     setAvatar(nameOrg.data.avatar_url);
     setOrgName(nameOrg.data.name);
     setRepos(
       response.data.map((item) => {
-        return item.full_name;
+        return item;
       })
     );
     setHideRepo(false);
   }
 
+  useEffect(() => {
+    localStorage.setItem("repos", JSON.stringify(repos))
+  }, [repos])
+
   return (
     <S.Container>
-      <S.divButton>
+      <S.DivButton>
         <S.SubmitButton onClick={handleSubmit}>
-          {hideRepo ? (
+          {hideRepo ? (<>
             <FaPlus color="#FFF" size={14} />
-          ) : (
+            <p>Mostrar repositorio</p>
+          </>) : (<>
             <FaMinus color="#FFF" size={14} />
-          )}
-          {hideRepo ? <a>Mostrar repositorio</a> : <a>Ocultar repositorio</a>}
+            <p>Ocultar repositorio</p>
+          </>)}
         </S.SubmitButton>
-      </S.divButton>
+      </S.DivButton>
 
       <div>
-        <img src={avatar} />
+        <img src={avatar} alt=""/>
         <h1>{orgname}</h1>
       </div>
 
-      <S.List>
-        {repos.map((repo) => (
-          <li key={repo}>
-            <span>{repo}</span>
-            <a href="">
+      <S.List> 
+        {!hideRepo && repos.map((repo) => (
+          <li key={repo.full_name}>
+            <span>{repo.full_name}</span>
+            <Link to={`/repositorio/${encodeURIComponent(repo.full_name)}`}>
               <FaBars size={20} />
-            </a>
+            </Link>
           </li>
         ))}
       </S.List>

@@ -31,7 +31,9 @@ export const Container = styled.div`
   }
 `;
 
-export const divButton = styled.div``;
+export const DivButton = styled.div`
+  display: flex;
+`;
 export const SubmitButton = styled.button`
   background: #9400d3;
   border: 0;
@@ -49,7 +51,7 @@ export const SubmitButton = styled.button`
   --color-light: #8b008b;
   --color-dark: #8b008b;
 
-  a {
+  p {
     margin-left: 20px;
   }
 
