@@ -26,6 +26,9 @@ export default createGlobalStyle`
         font-family: SF Mono, Arial, Helvetica, sans-serif;
     }
 
+    h1 {
+        font-family: SF Mono, Arial, Helvetica, sans-serif;
+    }
     button {
         cursor: pointer;
     }
